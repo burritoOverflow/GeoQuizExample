@@ -2,7 +2,6 @@ package com.example.geoquiz
 
 import android.os.Bundle
 import android.view.Gravity
-import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
@@ -31,6 +30,20 @@ class MainActivity : AppCompatActivity() {
         questionTextView.setText(questionTextResId)
     }
 
+    private fun checkAnswer(userAnswer: Boolean) {
+        val correctAnswer = questionBank[currentIndex].answer
+
+        val messageResId = if (userAnswer == correctAnswer) {
+            R.string.correct_toast
+        } else {
+            R.string.incorrect_toast
+        }
+
+        val toast = Toast.makeText(this, messageResId, Toast.LENGTH_LONG)
+        toast.setGravity(Gravity.TOP, 0, 100)
+        toast.show()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -40,16 +53,12 @@ class MainActivity : AppCompatActivity() {
         nextButton = findViewById(R.id.next_button)
         questionTextView = findViewById(R.id.question_text_view)
 
-        trueButton.setOnClickListener { _: View ->
-            val toast = Toast.makeText(this, R.string.correct_toast, Toast.LENGTH_LONG)
-            toast.setGravity(Gravity.TOP, 0, 100)
-            toast.show()
+        trueButton.setOnClickListener {
+            checkAnswer(true)
         }
 
-        falseButton.setOnClickListener { _: View ->
-            val toast = Toast.makeText(this, R.string.incorrect_toast, Toast.LENGTH_LONG)
-            toast.setGravity(Gravity.TOP, 0, 100)
-            toast.show()
+        falseButton.setOnClickListener {
+            checkAnswer(false)
         }
 
         nextButton.setOnClickListener {
