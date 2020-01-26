@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProviders
 
 private const val TAG = "MainActivity"
+private const val KEY_INDEX = "index"
 
 class MainActivity : AppCompatActivity() {
 
@@ -41,7 +42,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun displayCorrectCounter() {
-        correctGuessTextView.setText(quizViewModel.currentCorrectCounter.toString())
+        correctGuessTextView.setText(quizViewModel.correctGuesses.toString())
     }
 
     private fun checkAnswer(userAnswer: Boolean) {
@@ -69,6 +70,10 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         Log.d(TAG, "OnCreate(Bundle?) called.")
         setContentView(R.layout.activity_main)
+
+        // get the initial state
+        val currentIndex = savedInstanceState?.getInt(KEY_INDEX, 0) ?: 0
+        quizViewModel.currentIndex = currentIndex
 
         trueButton = findViewById(R.id.true_button)
         falseButton = findViewById(R.id.false_button)
@@ -101,6 +106,13 @@ class MainActivity : AppCompatActivity() {
         // get the question text to be displayed in the view by
         // the current index
         updateQuestion()
+    }
+
+
+    override fun onSaveInstanceState(savedInstanceState: Bundle) {
+        super.onSaveInstanceState(savedInstanceState)
+        Log.i(TAG, "Save instance state")
+        savedInstanceState.putInt(KEY_INDEX, quizViewModel.currentIndex)
     }
 
 

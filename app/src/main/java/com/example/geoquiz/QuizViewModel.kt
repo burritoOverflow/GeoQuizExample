@@ -25,8 +25,9 @@ class QuizViewModel : ViewModel() {
         Question(R.string.question_asia, true)
     )
 
-    private var currentIndex = 0
-    private var correctGuesses = 0
+
+    var currentIndex = 0
+    var correctGuesses = 0
 
     // return the answer and text for the current question
     val currentQuestionAnswer: Boolean
@@ -35,8 +36,6 @@ class QuizViewModel : ViewModel() {
     val currentQuestionText: Int
         get() = questionBank[currentIndex].textResId
 
-    val currentCorrectCounter: Int
-        get() = correctGuesses
 
     fun moveToNext() {
         currentIndex = (currentIndex + 1) % questionBank.size
