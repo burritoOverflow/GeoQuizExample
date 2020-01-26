@@ -42,7 +42,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun displayCorrectCounter() {
-        correctGuessTextView.setText(quizViewModel.correctGuesses.toString())
+        correctGuessTextView.text = quizViewModel.correctGuesses.toString()
     }
 
     private fun checkAnswer(userAnswer: Boolean) {

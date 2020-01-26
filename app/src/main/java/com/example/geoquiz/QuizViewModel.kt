@@ -42,7 +42,7 @@ class QuizViewModel : ViewModel() {
     }
 
     fun moveToPrev() {
-        currentIndex = currentIndex - 1
+        currentIndex -= 1
         if (currentIndex < 0) {
             val lastIndex = questionBank.size - 1
             currentIndex = lastIndex
