@@ -28,6 +28,7 @@ class QuizViewModel : ViewModel() {
 
     var currentIndex = 0
     var correctGuesses = 0
+    var isCheater = false
 
     // return the answer and text for the current question
     val currentQuestionAnswer: Boolean

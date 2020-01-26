@@ -1,5 +1,6 @@
 package com.example.geoquiz
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -13,6 +14,7 @@ import androidx.lifecycle.ViewModelProviders
 
 private const val TAG = "MainActivity"
 private const val KEY_INDEX = "index"
+private const val REQUEST_CHEAT_CODE = 0
 
 class MainActivity : AppCompatActivity() {
 
@@ -48,19 +50,16 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun checkAnswer(userAnswer: Boolean) {
-        Log.d(TAG, "Answer Submitted. Disabling buttons.")
         trueButton.isEnabled = false
         falseButton.isEnabled = false
 
         val correctAnswer = quizViewModel.currentQuestionAnswer
-        val messageResId: Int
 
-        if (userAnswer == correctAnswer) {
-            messageResId = R.string.correct_toast
-            incrementCorrectCounter()
-            displayCorrectCounter()
-        } else {
-            messageResId = R.string.incorrect_toast
+
+        val messageResId = when {
+            quizViewModel.isCheater -> R.string.judgment_toast
+            userAnswer == correctAnswer -> R.string.correct_toast
+            else -> R.string.incorrect_toast
         }
 
         val toast = Toast.makeText(this, messageResId, Toast.LENGTH_LONG)
@@ -70,7 +69,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Log.d(TAG, "OnCreate(Bundle?) called.")
         setContentView(R.layout.activity_main)
 
         // get the initial state
@@ -97,8 +95,9 @@ class MainActivity : AppCompatActivity() {
 
         cheatButton.setOnClickListener {
             // start cheat activity
-            val intent = Intent(this, CheatActivity::class.java)
-            startActivity(intent)
+            val answerIsTrue = quizViewModel.currentQuestionAnswer
+            val intent = CheatActivity.newIntent(this@MainActivity, answerIsTrue)
+            startActivityForResult(intent, REQUEST_CHEAT_CODE)
         }
 
         nextButton.setOnClickListener {
@@ -117,37 +116,22 @@ class MainActivity : AppCompatActivity() {
         updateQuestion()
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode != Activity.RESULT_OK) {
+            return
+        }
+
+        if (requestCode == REQUEST_CHEAT_CODE) {
+            quizViewModel.isCheater = data?.getBooleanExtra(EXTRA_ANSWER_IS_SHOWN, false) ?: false
+        }
+    }
+
 
     override fun onSaveInstanceState(savedInstanceState: Bundle) {
         super.onSaveInstanceState(savedInstanceState)
         Log.i(TAG, "Save instance state")
         savedInstanceState.putInt(KEY_INDEX, quizViewModel.currentIndex)
-    }
-
-
-    override fun onStart() {
-        super.onStart()
-        Log.d(TAG, "onStart() called")
-    }
-
-    override fun onResume() {
-        super.onResume()
-        Log.d(TAG, "onResume() called")
-    }
-
-    override fun onPause() {
-        super.onPause()
-        Log.d(TAG, "onPause() called")
-    }
-
-    override fun onStop() {
-        super.onStop()
-        Log.d(TAG, "onStop() called")
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        Log.d(TAG, "onDestroy() called")
     }
 
 }
