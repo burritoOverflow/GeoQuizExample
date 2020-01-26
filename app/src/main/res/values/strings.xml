@@ -12,4 +12,6 @@
     <string name="incorrect_toast">Incorrect!</string>
     <string name="next_button">Next</string>
     <string name="previous_button">Previous</string>
+    <string name="correct_label">Correct Guesses:</string>
+    <string name="correct_counter">0</string>
 </resources>

@@ -15,6 +15,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var nextButton: ImageButton
     private lateinit var previousButton: ImageButton
     private lateinit var questionTextView: TextView
+    private lateinit var correctGuessTextView: TextView
 
     private val questionBank = listOf(
         Question(R.string.question_australia, true),
@@ -26,19 +27,28 @@ class MainActivity : AppCompatActivity() {
     )
 
     private var currentIndex = 0
+    private var correctGuesses = 0
 
     private fun updateQuestion() {
         val questionTextResId = questionBank[currentIndex].textResId
         questionTextView.setText(questionTextResId)
     }
 
+    private fun incrementAndDisplayCorrectCounter() {
+        correctGuesses++
+        correctGuessTextView.setText(correctGuesses.toString())
+    }
+
     private fun checkAnswer(userAnswer: Boolean) {
         val correctAnswer = questionBank[currentIndex].answer
 
-        val messageResId = if (userAnswer == correctAnswer) {
-            R.string.correct_toast
+        val messageResId: Int
+
+        if (userAnswer == correctAnswer) {
+            messageResId = R.string.correct_toast
+            incrementAndDisplayCorrectCounter()
         } else {
-            R.string.incorrect_toast
+            messageResId = R.string.incorrect_toast
         }
 
         val toast = Toast.makeText(this, messageResId, Toast.LENGTH_LONG)
@@ -55,6 +65,7 @@ class MainActivity : AppCompatActivity() {
         nextButton = findViewById(R.id.next_button)
         previousButton = findViewById(R.id.previous_button)
         questionTextView = findViewById(R.id.question_text_view)
+        correctGuessTextView = findViewById(R.id.correct_counter)
 
         trueButton.setOnClickListener {
             checkAnswer(true)
