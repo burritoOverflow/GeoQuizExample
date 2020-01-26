@@ -36,8 +36,11 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    private fun incrementAndDisplayCorrectCounter() {
+    private fun incrementCorrectCounter() {
         quizViewModel.incrementCorrectCounter()
+    }
+
+    private fun displayCorrectCounter() {
         correctGuessTextView.setText(quizViewModel.currentCorrectCounter.toString())
     }
 
@@ -51,7 +54,8 @@ class MainActivity : AppCompatActivity() {
 
         if (userAnswer == correctAnswer) {
             messageResId = R.string.correct_toast
-            incrementAndDisplayCorrectCounter()
+            incrementCorrectCounter()
+            displayCorrectCounter()
         } else {
             messageResId = R.string.incorrect_toast
         }
@@ -72,6 +76,8 @@ class MainActivity : AppCompatActivity() {
         previousButton = findViewById(R.id.previous_button)
         questionTextView = findViewById(R.id.question_text_view)
         correctGuessTextView = findViewById(R.id.correct_counter)
+
+        displayCorrectCounter()
 
         trueButton.setOnClickListener {
             checkAnswer(true)
