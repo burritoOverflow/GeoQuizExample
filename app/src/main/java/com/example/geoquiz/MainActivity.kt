@@ -35,6 +35,9 @@ class MainActivity : AppCompatActivity() {
     private fun updateQuestion() {
         val questionTextResId = questionBank[currentIndex].textResId
         questionTextView.setText(questionTextResId)
+        Log.d(TAG, "Updating question to id: $questionTextResId, enabling buttons.")
+        trueButton.isEnabled = true
+        falseButton.isEnabled = true
     }
 
     private fun incrementAndDisplayCorrectCounter() {
@@ -43,8 +46,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun checkAnswer(userAnswer: Boolean) {
-        val correctAnswer = questionBank[currentIndex].answer
+        Log.d(TAG, "Answer Submitted. Disabling buttons.")
+        trueButton.isEnabled = false
+        falseButton.isEnabled = false
 
+        val correctAnswer = questionBank[currentIndex].answer
         val messageResId: Int
 
         if (userAnswer == correctAnswer) {
@@ -81,13 +87,19 @@ class MainActivity : AppCompatActivity() {
 
         nextButton.setOnClickListener {
             currentIndex = (currentIndex + 1) % questionBank.size
+            Log.d(TAG, "Current question index: $currentIndex")
             updateQuestion()
         }
 
         previousButton.setOnClickListener {
             currentIndex = currentIndex - 1
             if (currentIndex < 0) {
-                currentIndex = questionBank.size - 1
+                val lastIndex = questionBank.size - 1
+                currentIndex = lastIndex
+                Log.d(
+                    TAG, "Current question index should be last in questionBankSize: " +
+                            "Current: $currentIndex QuestionBank Size: $lastIndex"
+                )
             }
             updateQuestion()
         }
