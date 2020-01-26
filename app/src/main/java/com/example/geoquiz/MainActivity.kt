@@ -8,7 +8,6 @@ import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 
 private const val TAG = "MainActivity"
@@ -22,29 +21,24 @@ class MainActivity : AppCompatActivity() {
     private lateinit var questionTextView: TextView
     private lateinit var correctGuessTextView: TextView
 
-    private val questionBank = listOf(
-        Question(R.string.question_australia, true),
-        Question(R.string.question_oceans, true),
-        Question(R.string.question_mideast, false),
-        Question(R.string.question_africa, false),
-        Question(R.string.question_americas, true),
-        Question(R.string.question_asia, true)
-    )
+    // lazy initialization wont occur until the first time
+    // this view model is accessed
+    private val quizViewModel: QuizViewModel by lazy {
+        ViewModelProviders.of(this).get(QuizViewModel::class.java)
+    }
 
-    private var currentIndex = 0
-    private var correctGuesses = 0
 
     private fun updateQuestion() {
-        val questionTextResId = questionBank[currentIndex].textResId
+        val questionTextResId = quizViewModel.currentQuestionText
         questionTextView.setText(questionTextResId)
-        Log.d(TAG, "Updating question to id: $questionTextResId, enabling buttons.")
         trueButton.isEnabled = true
         falseButton.isEnabled = true
     }
 
+
     private fun incrementAndDisplayCorrectCounter() {
-        correctGuesses++
-        correctGuessTextView.setText(correctGuesses.toString())
+        quizViewModel.incrementCorrectCounter()
+        correctGuessTextView.setText(quizViewModel.currentCorrectCounter.toString())
     }
 
     private fun checkAnswer(userAnswer: Boolean) {
@@ -52,7 +46,7 @@ class MainActivity : AppCompatActivity() {
         trueButton.isEnabled = false
         falseButton.isEnabled = false
 
-        val correctAnswer = questionBank[currentIndex].answer
+        val correctAnswer = quizViewModel.currentQuestionAnswer
         val messageResId: Int
 
         if (userAnswer == correctAnswer) {
@@ -72,12 +66,6 @@ class MainActivity : AppCompatActivity() {
         Log.d(TAG, "OnCreate(Bundle?) called.")
         setContentView(R.layout.activity_main)
 
-        val provider: ViewModelProvider = ViewModelProviders.of(this)
-        val quizViewModel = provider.get(QuizViewModel::class.java)
-
-        // note that after initialization the original quizViewModel remains in memory
-        Log.d(TAG, "Got a QuizViewModel $quizViewModel")
-
         trueButton = findViewById(R.id.true_button)
         falseButton = findViewById(R.id.false_button)
         nextButton = findViewById(R.id.next_button)
@@ -94,28 +82,15 @@ class MainActivity : AppCompatActivity() {
         }
 
         nextButton.setOnClickListener {
-            currentIndex = (currentIndex + 1) % questionBank.size
-            Log.d(TAG, "Current question index: $currentIndex")
+            quizViewModel.moveToNext()
             updateQuestion()
         }
 
         previousButton.setOnClickListener {
-            currentIndex = currentIndex - 1
-            if (currentIndex < 0) {
-                val lastIndex = questionBank.size - 1
-                currentIndex = lastIndex
-                Log.d(
-                    TAG, "Current question index should be last in questionBankSize: " +
-                            "Current: $currentIndex QuestionBank Size: $lastIndex"
-                )
-            }
+            quizViewModel.moveToPrev()
             updateQuestion()
         }
 
-        questionTextView.setOnClickListener {
-            currentIndex = (currentIndex + 1) % questionBank.size
-            updateQuestion()
-        }
 
         // get the question text to be displayed in the view by
         // the current index
