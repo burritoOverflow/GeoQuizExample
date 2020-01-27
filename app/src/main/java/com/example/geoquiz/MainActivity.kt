@@ -62,6 +62,12 @@ class MainActivity : AppCompatActivity() {
             else -> R.string.incorrect_toast
         }
 
+        // if correct, update the counter and display the new value
+        if (userAnswer == correctAnswer) {
+            incrementCorrectCounter()
+            displayCorrectCounter()
+        }
+
         val toast = Toast.makeText(this, messageResId, Toast.LENGTH_LONG)
         toast.setGravity(Gravity.TOP, 0, 100)
         toast.show()
