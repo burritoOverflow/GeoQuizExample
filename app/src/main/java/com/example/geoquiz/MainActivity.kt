@@ -57,7 +57,7 @@ class MainActivity : AppCompatActivity() {
 
 
         val messageResId = when {
-            quizViewModel.isCheater -> R.string.judgment_toast
+            quizViewModel.determineIfCheatQuestion(quizViewModel.currentIndex) -> R.string.judgment_toast
             userAnswer == correctAnswer -> R.string.correct_toast
             else -> R.string.incorrect_toast
         }
@@ -103,6 +103,8 @@ class MainActivity : AppCompatActivity() {
             // start cheat activity
             val answerIsTrue = quizViewModel.currentQuestionAnswer
             val intent = CheatActivity.newIntent(this@MainActivity, answerIsTrue)
+            // quizViewModel.isCheater = true
+            quizViewModel.addIDToCheatList(quizViewModel.currentIndex)
             startActivityForResult(intent, REQUEST_CHEAT_CODE)
         }
 
@@ -129,7 +131,10 @@ class MainActivity : AppCompatActivity() {
         }
 
         if (requestCode == REQUEST_CHEAT_CODE) {
-            quizViewModel.isCheater = data?.getBooleanExtra(EXTRA_ANSWER_IS_SHOWN, false) ?: false
+            var cheater = data?.getBooleanExtra(EXTRA_ANSWER_IS_SHOWN, false) ?: false
+            if (cheater) {
+                quizViewModel.addIDToCheatList(quizViewModel.currentIndex)
+            }
         }
     }
 

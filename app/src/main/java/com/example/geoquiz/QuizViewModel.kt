@@ -2,6 +2,7 @@ package com.example.geoquiz
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
+import java.util.*
 
 private const val TAG = "QuizViewModel"
 
@@ -25,9 +26,11 @@ class QuizViewModel : ViewModel() {
         Question(R.string.question_asia, true)
     )
 
+    private val cheatList: ArrayList<Int> = ArrayList()
+
     var currentIndex = 0
     var correctGuesses = 0
-    var isCheater = false
+    // var isCheater = false
 
     // return the answer and text for the current question
     val currentQuestionAnswer: Boolean
@@ -55,5 +58,17 @@ class QuizViewModel : ViewModel() {
 
     fun incrementCorrectCounter() {
         correctGuesses++
+    }
+
+    // store the indicies of questions that 'cheat' has been perfomed on
+    fun addIDToCheatList(questionID: Int) {
+        cheatList.add(questionID)
+    }
+
+    fun determineIfCheatQuestion(questionID: Int): Boolean {
+        if (questionID in cheatList) {
+            return true
+        }
+        return false
     }
 }
